@@ -1,9 +1,30 @@
 import database from "infra/database.js";
+import { version } from "react";
 
 export default async function status(request, response) {
-  const result = await database.query("SELECT 1 + 1 as sum;");
-  console.log(result.rows);
-  response.status(200).json({ chave: "valor" });
+  const updatedAt = new Date().toISOString();
+  try {
+    const databaseVersion = await database.query("SHOW server_version");
+    const databaseVersionValue = databaseVersion.rows[0].server_version;
+
+    const databaseMaxConnections = await database.query("SHOW max_connections");
+    const databaseMaxConnectionsValue =
+      databaseMaxConnections.rows[0].max_connections;
+
+    response.status(200).json({
+      updated_at: updatedAt,
+      dependencies: {
+        database: {
+          version: databaseVersionValue,
+          max_connections: parseInt(databaseMaxConnectionsValue),
+        },
+      },
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    database.end();
+  }
 }
 /**
   * curl http://localhost:3000/api/status -v
