@@ -1,9 +1,11 @@
 import database from '../../../../../infra/database.js';
+import orchestrator from "../../../../orchestrator.js";
 
-beforeAll(cleanDatabase);
-async function cleanDatabase() {
+beforeAll( async () => {
+  await orchestrator.waitForAllServices();
   await database.query("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
-}
+}); 
+
 
 test("GET to /api/v1/migrations should return 200", async () => {
     process.env.NODE_ENV = "development"
