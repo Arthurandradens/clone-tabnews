@@ -1,5 +1,5 @@
-import database from "../../../../../infra/database.js";
-import orchestrator from "../../../../orchestrator.js";
+import database from "infra/database.js";
+import orchestrator from "test/orchestrator.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
