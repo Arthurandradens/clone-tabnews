@@ -43,7 +43,7 @@ export default async function migrations(request, response) {
     }
   } catch (error) {
     console.error(error);
-    throw error;
+    return response.status(500).json({ error: error.message });
   } finally {
     await dbClient.end();
   }
